@@ -10,16 +10,16 @@ import streamlit.components.v1 as components
 # ALAPBEÁLLÍTÁSOK
 # ==========================================
 
+BASE_DIR = Path(__file__).parent
+STATE_FILE = BASE_DIR / "vasalosor_allapot.json"
+LOGO_FILE = BASE_DIR / "header_logo.png"
+
 st.set_page_config(
     page_title="Vasalósor vezérlő",
-    page_icon="🧺",
+    page_icon=str(LOGO_FILE) if LOGO_FILE.exists() else "🧺",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-
-BASE_DIR = Path(__file__).parent
-STATE_FILE = BASE_DIR / "vasalosor_allapot.json"
-LOGO_FILE = BASE_DIR / "fejléc_logó.png"
 
 # ==========================================
 # PARTNEREK
@@ -352,6 +352,45 @@ div[data-testid="stSelectbox"] svg {
     margin-bottom: 5px;
 }
 
+/* ==========================================
+   DISZKRET ELÖL / HÁTUL VÁLASZTÓ
+   ========================================== */
+
+.st-key-station_switcher {
+    position: fixed !important;
+    right: 12px !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    width: 190px !important;
+    z-index: 999999 !important;
+    background: rgba(17, 24, 32, 0.92) !important;
+    border: 1px solid rgba(217, 173, 80, 0.35);
+    border-radius: 12px;
+    padding: 5px 7px !important;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.35);
+}
+
+.st-key-station_switcher [data-testid="stHorizontalBlock"] {
+    gap: 5px !important;
+}
+
+.st-key-station_switcher .stButton > button {
+    min-height: 37px !important;
+    height: 37px !important;
+    padding: 2px 5px !important;
+    font-size: 12px !important;
+    letter-spacing: 0 !important;
+    border-radius: 8px !important;
+    font-weight: 800 !important;
+}
+
+@media (max-width: 600px) {
+    .st-key-station_switcher {
+        width: 170px !important;
+        right: 8px !important;
+        bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -651,42 +690,6 @@ components.html("""
 
 
 # ==========================================
-# KEZELŐÁLLOMÁS VÁLTÁS
-# ==========================================
-
-if "kezeloallomas" not in st.session_state:
-    st.session_state["kezeloallomas"] = "ELÖL"
-
-st.markdown("""
-<style>
-div[data-testid="stHorizontalBlock"] button {
-    min-height: 58px;
-}
-</style>
-""", unsafe_allow_html=True)
-
-bal, jobb = st.columns(2)
-
-with bal:
-    if st.button(
-        "◀ ELÖL",
-        use_container_width=True,
-        type="primary" if st.session_state["kezeloallomas"] == "ELÖL" else "secondary"
-    ):
-        st.session_state["kezeloallomas"] = "ELÖL"
-        st.rerun()
-
-with jobb:
-    if st.button(
-        "HÁTUL ▶",
-        use_container_width=True,
-        type="primary" if st.session_state["kezeloallomas"] == "HÁTUL" else "secondary"
-    ):
-        st.session_state["kezeloallomas"] = "HÁTUL"
-        st.rerun()
-
-
-# ==========================================
 # AUTOMATIKUS FRISSÍTÉS
 # ==========================================
 
@@ -697,6 +700,38 @@ def futo_nezet():
         hatso_nezet()
     else:
         elso_nezet()
+
+
+# ==========================================
+# KEZELŐÁLLOMÁS VÁLTÁS
+# ==========================================
+
+if "kezeloallomas" not in st.session_state:
+    st.session_state["kezeloallomas"] = "ELÖL"
+
+with st.container(key="station_switcher"):
+
+    bal, jobb = st.columns(2)
+
+    with bal:
+        if st.button(
+            "◀ ELÖL",
+            use_container_width=True,
+            type="primary" if st.session_state["kezeloallomas"] == "ELÖL" else "secondary",
+            key="station_front"
+        ):
+            st.session_state["kezeloallomas"] = "ELÖL"
+            st.rerun()
+
+    with jobb:
+        if st.button(
+            "HÁTUL ▶",
+            use_container_width=True,
+            type="primary" if st.session_state["kezeloallomas"] == "HÁTUL" else "secondary",
+            key="station_back"
+        ):
+            st.session_state["kezeloallomas"] = "HÁTUL"
+            st.rerun()
 
 
 futo_nezet()
