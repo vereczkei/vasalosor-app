@@ -1,0 +1,19 @@
+
+{
+  "name": "Vasalósor vezérlő",
+  "short_name": "Vasalósor",
+  "description": "Elülső és hátulsó vasalósor kezelőállomás",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#111820",
+  "theme_color": "#111820",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2933/2933245.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
