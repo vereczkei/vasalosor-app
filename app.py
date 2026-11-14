@@ -26,29 +26,11 @@ st.set_page_config(
 # ==========================================
 
 CEGEK = [
-    "1.0",
-    "2.0",
-    "Airport",
-    "Ambassador",
-    "Amberlyn",
-    "Aurea",
-    "BQA Apartman",
-    "BQA Hotel",
-    "BQA Spanyol",
-    "City Home",
-    "Császár",
-    "Danube",
-    "Flow",
-    "Intercity",
-    "Kimpton",
-    "La Rouge",
-    "Menza Futó",
-    "Mika",
-    "Netizen",
-    "Noble",
-    "President",
-    "Stories",
-    "Wonder",
+    "1.0", "2.0", "Airport", "Ambassador", "Amberlyn",
+    "Aurea", "BQA Apartman", "BQA Hotel", "BQA Spanyol",
+    "City Home", "Császár", "Danube", "Flow", "Intercity",
+    "Kimpton", "La Rouge", "Menza Futó", "Mika",
+    "Netizen", "Noble", "President", "Stories", "Wonder"
 ]
 
 CSAK_LEPEDO = ["Stories", "La Rouge"]
@@ -196,12 +178,17 @@ div[data-baseweb="menu"] [role="option"] {
     min-height: 48px !important;
 }
 
+div[data-testid="stImage"] {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
 div[data-testid="stImage"] img {
     width: 60% !important;
     height: auto !important;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto !important;
 }
 
 .main-title {
@@ -352,41 +339,39 @@ div[data-testid="stSelectbox"] svg {
     margin-bottom: 5px;
 }
 
-/* ==========================================
-   DISZKRET ELÖL / HÁTUL VÁLASZTÓ
-   ========================================== */
+/* ELÖL / HÁTUL KAPCSOLÓ */
 
 .st-key-station_switcher {
     position: fixed !important;
-    right: 12px !important;
+    left: 62px !important;
+    right: auto !important;
     bottom: calc(12px + env(safe-area-inset-bottom)) !important;
-    width: 190px !important;
+    width: 133px !important;
     z-index: 999999 !important;
-    background: rgba(17, 24, 32, 0.92) !important;
-    border: 1px solid rgba(217, 173, 80, 0.35);
-    border-radius: 12px;
-    padding: 5px 7px !important;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.35);
+    background: rgba(17, 24, 32, 0.88) !important;
+    border: 1px solid rgba(217, 173, 80, 0.3);
+    border-radius: 10px;
+    padding: 4px !important;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
 }
 
 .st-key-station_switcher [data-testid="stHorizontalBlock"] {
-    gap: 5px !important;
+    gap: 3px !important;
 }
 
 .st-key-station_switcher .stButton > button {
-    min-height: 37px !important;
-    height: 37px !important;
-    padding: 2px 5px !important;
-    font-size: 12px !important;
+    min-height: 26px !important;
+    height: 26px !important;
+    padding: 1px 3px !important;
+    font-size: 9px !important;
     letter-spacing: 0 !important;
-    border-radius: 8px !important;
-    font-weight: 800 !important;
+    border-radius: 6px !important;
 }
 
 @media (max-width: 600px) {
     .st-key-station_switcher {
-        width: 170px !important;
-        right: 8px !important;
+        left: 60px !important;
+        width: 133px !important;
         bottom: calc(8px + env(safe-area-inset-bottom)) !important;
     }
 }
@@ -449,16 +434,13 @@ components.html("""
 
 def logo_megjelenites():
 
-    bal, kozep, jobb = st.columns([1, 3, 1])
-
-    with kozep:
-        if LOGO_FILE.exists():
-            st.image(str(LOGO_FILE))
-        else:
-            st.markdown(
-                '<div class="main-title">VASALÓSOR</div>',
-                unsafe_allow_html=True
-            )
+    if LOGO_FILE.exists():
+        st.image(str(LOGO_FILE), width=400)
+    else:
+        st.markdown(
+            '<div class="main-title">VASALÓSOR</div>',
+            unsafe_allow_html=True
+        )
 
 
 def cim_megjelenites():
@@ -622,7 +604,7 @@ def hatso_nezet():
 
 
 # ==========================================
-# TELJES KÉPERNYŐ
+# TELJES KÉPERNYŐ GOMB
 # ==========================================
 
 components.html("""
@@ -690,19 +672,6 @@ components.html("""
 
 
 # ==========================================
-# AUTOMATIKUS FRISSÍTÉS
-# ==========================================
-
-@st.fragment(run_every=1)
-def futo_nezet():
-
-    if st.session_state["kezeloallomas"] == "HÁTUL":
-        hatso_nezet()
-    else:
-        elso_nezet()
-
-
-# ==========================================
 # KEZELŐÁLLOMÁS VÁLTÁS
 # ==========================================
 
@@ -732,6 +701,19 @@ with st.container(key="station_switcher"):
         ):
             st.session_state["kezeloallomas"] = "HÁTUL"
             st.rerun()
+
+
+# ==========================================
+# AUTOMATIKUS FRISSÍTÉS
+# ==========================================
+
+@st.fragment(run_every=1)
+def futo_nezet():
+
+    if st.session_state["kezeloallomas"] == "HÁTUL":
+        hatso_nezet()
+    else:
+        elso_nezet()
 
 
 futo_nezet()
