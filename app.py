@@ -3,6 +3,7 @@ import streamlit as st
 import json
 import os
 import html
+import base64
 from pathlib import Path
 import streamlit.components.v1 as components
 
@@ -178,17 +179,24 @@ div[data-baseweb="menu"] [role="option"] {
     min-height: 48px !important;
 }
 
-div[data-testid="stImage"] {
-    width: 100% !important;
-    display: flex !important;
-    justify-content: center !important;
+/* LOGÓ – VALÓDI KÉPERNYŐKÖZÉPRE IGAZÍTÁS */
+
+.logo-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 8px auto;
+    text-align: center;
 }
 
-div[data-testid="stImage"] img {
-    width: 60% !important;
-    height: auto !important;
+.logo-wrap img {
     display: block;
-    margin: 0 auto !important;
+    width: min(400px, 60vw);
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
 }
 
 .main-title {
@@ -339,16 +347,17 @@ div[data-testid="stSelectbox"] svg {
     margin-bottom: 5px;
 }
 
-/* ELÖL / HÁTUL KAPCSOLÓ */
+/* ELÖL / HÁTUL KAPCSOLÓ – BAL FELSŐ SAROK */
 
 .st-key-station_switcher {
     position: fixed !important;
-    left: 62px !important;
+    left: 12px !important;
     right: auto !important;
-    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    top: calc(12px + env(safe-area-inset-top)) !important;
+    bottom: auto !important;
     width: 133px !important;
     z-index: 999999 !important;
-    background: rgba(17, 24, 32, 0.88) !important;
+    background: rgba(17, 24, 32, 0.92) !important;
     border: 1px solid rgba(217, 173, 80, 0.3);
     border-radius: 10px;
     padding: 4px !important;
@@ -370,9 +379,9 @@ div[data-testid="stSelectbox"] svg {
 
 @media (max-width: 600px) {
     .st-key-station_switcher {
-        left: 60px !important;
+        left: 8px !important;
+        top: calc(8px + env(safe-area-inset-top)) !important;
         width: 133px !important;
-        bottom: calc(8px + env(safe-area-inset-bottom)) !important;
     }
 }
 
@@ -435,7 +444,20 @@ components.html("""
 def logo_megjelenites():
 
     if LOGO_FILE.exists():
-        st.image(str(LOGO_FILE), width=400)
+        with open(LOGO_FILE, "rb") as f:
+            logo_data = base64.b64encode(f.read()).decode("utf-8")
+
+        st.markdown(
+            f"""
+            <div class="logo-wrap">
+                <img
+                    src="data:image/png;base64,{logo_data}"
+                    alt="Vasalósor logó"
+                >
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     else:
         st.markdown(
             '<div class="main-title">VASALÓSOR</div>',
